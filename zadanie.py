@@ -1,55 +1,63 @@
-from datetime import date, timedelta
+from datetime import datetime, timedelta
 
 
-def get_birthdays_per_week(users):
-    current_date = date.today()
+def get_birthdays_per_week(users_list):
+    today = datetime.now()
+    end_of_next_week = today + timedelta(days=14)
 
-    birthdays_by_week = {}
+    birthdays_in_next_week = {}
 
-    for user in users:
+    for user in users_list:
         name = user['name']
-        birthday = user['birthday']
-        start_of_week = birthday - timedelta(days=birthday.weekday())
+        birth_date = user['birthday']
 
-        if start_of_week not in birthdays_by_week:
-            birthdays_by_week[start_of_week] = []
+        birth_date = birth_date.replace(year=today.year)
 
-        birthdays_by_week[start_of_week].append({'name': name, 'birthday': birthday})
+        if today <= birth_date <= end_of_next_week:
+            day_of_week = birth_date.strftime("%A")
 
-    for start_of_week, users_in_week in birthdays_by_week.items():
-        end_of_week = start_of_week + timedelta(days=6)
+            if day_of_week in ['Saturday', 'Sunday']:
+                day_of_week = 'Monday'
 
-        if any(user['birthday'].weekday() >= 5 for user in users_in_week):
-            start_of_week += timedelta(days=1)
-            end_of_week += timedelta(days=1)
+            if day_of_week not in birthdays_in_next_week:
+                birthdays_in_next_week[day_of_week] = [name]
+            else:
+                birthdays_in_next_week[day_of_week].append(name)
 
-        if start_of_week <= current_date <= end_of_week:
-            users_in_week_names = [user['name'] for user in users_in_week]
-            print(f"{start_of_week.strftime('%A')}: {', '.join(users_in_week_names)}")
+    return birthdays_in_next_week
 
 
-users = [
-    {'name': 'User1', 'birthday': date(2022, 1, 15)},
-    {'name': 'User2', 'birthday': date(2022, 1, 16)},
-    {'name': 'User3', 'birthday': date(2022, 1, 17)},
-    {'name': 'User4', 'birthday': date(2022, 1, 18)},
-    {'name': 'User5', 'birthday': date(2022, 1, 19)},
-    {'name': 'User6', 'birthday': date(2022, 1, 20)},
-    {'name': 'User7', 'birthday': date(2022, 1, 21)},
-    {'name': 'User8', 'birthday': date(2022, 1, 22)},
-    {'name': 'User9', 'birthday': date(2022, 1, 23)},
-    {'name': 'User10', 'birthday': date(2022, 1, 24)},
-    {'name': 'User11', 'birthday': date(2022, 1, 25)},
-    {'name': 'User12', 'birthday': date(2022, 1, 26)},
-    {'name': 'User13', 'birthday': date(2022, 1, 27)},
-    {'name': 'User14', 'birthday': date(2022, 1, 28)},
-    {'name': 'User15', 'birthday': date(2022, 1, 29)},
-    {'name': 'User16', 'birthday': date(2022, 1, 30)},
-    {'name': 'User17', 'birthday': date(2022, 1, 31)},
-    {'name': 'User18', 'birthday': date(2022, 2, 1)},
-    {'name': 'User19', 'birthday': date(2022, 2, 2)},
-    {'name': 'User20', 'birthday': date(2022, 2, 3)},
-    ]
+users_list = [
+    {'name': 'Jan', 'birthday': datetime(1900, 1, 27)},
+    {'name': 'Anna', 'birthday': datetime(1900, 2, 15)},
+    {'name': 'Kamil', 'birthday': datetime(1900, 1, 20)},
+    {'name': 'User1', 'birthday': datetime(2022, 1, 15, 0, 0)},
+    {'name': 'User2', 'birthday': datetime(2022, 1, 16, 0, 0)},
+    {'name': 'User3', 'birthday': datetime(2022, 1, 17, 0, 0)},
+    {'name': 'User4', 'birthday': datetime(2022, 1, 18, 0, 0)},
+    {'name': 'User5', 'birthday': datetime(2022, 1, 19, 0, 0)},
+    {'name': 'User6', 'birthday': datetime(2022, 1, 20, 0, 0)},
+    {'name': 'User7', 'birthday': datetime(2022, 1, 21, 0, 0)},
+    {'name': 'User8', 'birthday': datetime(2022, 1, 22, 0, 0)},
+    {'name': 'User9', 'birthday': datetime(2022, 1, 23, 0, 0)},
+    {'name': 'User10', 'birthday': datetime(2022, 1, 24, 0, 0)},
+    {'name': 'User11', 'birthday': datetime(2022, 1, 25, 0, 0)},
+    {'name': 'User12', 'birthday': datetime(2022, 1, 26, 0, 0)},
+    {'name': 'User13', 'birthday': datetime(2022, 1, 27, 0, 0)},
+    {'name': 'User14', 'birthday': datetime(2022, 1, 28, 0, 0)},
+    {'name': 'User15', 'birthday': datetime(2022, 1, 29, 0, 0)},
+    {'name': 'User16', 'birthday': datetime(2022, 1, 30, 0, 0)},
+    {'name': 'User17', 'birthday': datetime(2022, 1, 31, 0, 0)},
+    {'name': 'User18', 'birthday': datetime(2022, 2, 1, 0, 0)},
+    {'name': 'User19', 'birthday': datetime(2022, 2, 2, 0, 0)},
+    {'name': 'User20', 'birthday': datetime(2022, 2, 3, 0, 0)}
+]
 
 
-get_birthdays_per_week(users)
+birthdays_next_week_result = get_birthdays_per_week(users_list)
+
+for day_of_week in ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']:
+    users_in_day = birthdays_next_week_result.get(day_of_week, [])
+    users_str = ', '.join(users_in_day)
+    if users_str:
+        print(f"{day_of_week}: {users_str}")
