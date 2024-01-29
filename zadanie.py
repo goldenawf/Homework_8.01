@@ -61,4 +61,3 @@ for day_of_week in ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']:
     users_str = ', '.join(users_in_day)
     if users_str:
         print(f"{day_of_week}: {users_str}")
-
